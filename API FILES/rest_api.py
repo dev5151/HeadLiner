@@ -95,7 +95,7 @@ def fetchNegativeNews():
         if i in negativeNews:
             newNegativeNews.append(data["articles"][i])
 
-    return jsonify(negativeNews)
+    return jsonify(newNegativeNews)
 
 @app.route("/neutral",methods=['GET'])
 
