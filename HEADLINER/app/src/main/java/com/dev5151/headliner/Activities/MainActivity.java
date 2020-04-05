@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,9 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Retrofit retrofit;
     private List<News> news, list;
-    private String country = "india";
-    private String apiKey = "6efd3ee1e13b448a8e1c8b4c45ec0bc7";
     private TextView tv;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, HeadLineActivity.class));
+                startActivity(new Intent(MainActivity.this, SelectionActivity.class));
+                finish();
             }
         });
     }
@@ -59,12 +60,13 @@ public class MainActivity extends AppCompatActivity {
         news = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerView);
         tv = findViewById(R.id.textView);
+        progressBar = findViewById(R.id.progressBar);
     }
 
     private void fetchNews() {
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://3278c28f-22f4-4a57-ae2e-94d160e7efff.mock.pstmn.io/")
+                .baseUrl("https://e9969264-fc46-47b7-b347-8b701969d717.mock.pstmn.io/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -80,16 +82,17 @@ public class MainActivity extends AppCompatActivity {
                     Log.e("Retrofit", "Code: " + response.code());
                 } else {
                     news = response.body();
+                    progressBar.setVisibility(View.GONE);
                     list.addAll(news);
                 }
                 newsAdapter = new NewsAdapter(list, getApplicationContext());
                 recyclerView.setAdapter(newsAdapter);
-                final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL);
+                final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, true);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setHasFixedSize(true);
                 recyclerView.addOnScrollListener(new CenterScrollListener());
                 layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-
+                layoutManager.canScrollHorizontally();
             }
 
             @Override
